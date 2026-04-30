@@ -1,0 +1,3 @@
+# Optional. The test suite also runs with stdlib unittest.
+pytest>=8.0.0,<9.0.0
+

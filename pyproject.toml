@@ -1,0 +1,10 @@
+[project]
+name = "platform-slack-mcp-gateway"
+version = "0.1.0"
+description = "Slack MCP gateway for the Enterprise Data Platform analytics agent"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+

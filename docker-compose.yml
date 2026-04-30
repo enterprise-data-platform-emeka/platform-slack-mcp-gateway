@@ -1,0 +1,8 @@
+services:
+  slack-mcp-gateway:
+    build: .
+    env_file:
+      - .env
+    environment:
+      ANALYTICS_AGENT_URL: ${ANALYTICS_AGENT_URL:-http://host.docker.internal:8080}
+

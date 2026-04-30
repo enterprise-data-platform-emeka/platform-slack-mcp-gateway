@@ -107,6 +107,43 @@ ANALYTICS_AGENT_URL=http://localhost:8080
 For deployed AWS sessions, `ANALYTICS_AGENT_URL` should point at the existing
 analytics agent ALB/API endpoint.
 
+## Local Development
+
+Install dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+```
+
+Run tests with the standard library:
+
+```bash
+python -m unittest discover -s tests
+```
+
+Run the gateway locally:
+
+```bash
+python -m gateway.main
+```
+
+Run with Docker:
+
+```bash
+docker compose up --build
+```
+
+The first gateway implementation listens for Slack app mentions and direct
+messages, calls `POST /ask` on `platform-analytics-agent`, then posts a
+Slack-native answer with assumptions, cost, intent verdict, SQL, request ID,
+and a chart link when the analytics agent returns one.
+
+The branded PDF report should come next by moving the existing PDF builder out
+of `platform-analytics-agent/ui/app.py` into a backend endpoint that both
+Streamlit and this gateway can call.
+
 ## Build And Destroy Plan
 
 The Slack workspace and Slack app identity should remain stable.

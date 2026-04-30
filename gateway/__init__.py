@@ -1,0 +1,2 @@
+"""Slack MCP gateway package."""
+
