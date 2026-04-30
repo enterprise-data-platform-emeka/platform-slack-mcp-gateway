@@ -50,6 +50,19 @@ SLACK_BOT_TOKEN=<slack-bot-token>
 
 Do not commit real token values.
 
+For repo-owned GitHub deploys, save these as GitHub Actions secrets in the
+`platform-slack-mcp-gateway` repository, preferably scoped to the `dev`,
+`staging`, and `prod` environments:
+
+```text
+SLACK_APP_TOKEN
+SLACK_BOT_TOKEN
+```
+
+The deploy workflow copies those values into AWS Secrets Manager for the ECS
+task. The session orchestrator can still deploy this repo for end-to-end demos,
+but this repository owns its own CI and deploy path.
+
 ### Required Bot Token Scopes
 
 Add these in Slack app settings under **OAuth & Permissions**:
@@ -186,6 +199,25 @@ Terraform should manage AWS infrastructure:
 Terraform should not destroy and recreate the Slack workspace or app for every
 demo. Slack app setup is documented and portable via the app manifest in this
 repo.
+
+## GitHub Deployment
+
+This repo follows the same GitHub OIDC model as the other deployable platform
+services.
+
+One-time prerequisites:
+
+1. Add `platform-slack-mcp-gateway` to the GitHub OIDC allowlist in
+   `terraform-bootstrap`, then apply bootstrap.
+2. Add this repo to `terraform-github-setup`, then apply it so GitHub
+   environments and the `AWS_ACCOUNT_ID` repository variable exist.
+3. Apply `terraform-platform-infra-live` with the Slack MCP module enabled for
+   the target environment so ECR, ECS, logs, IAM, and secret placeholders exist.
+4. Add `SLACK_APP_TOKEN` and `SLACK_BOT_TOKEN` to this repo's GitHub Actions
+   secrets for each environment.
+
+After CI passes on `main`, `.github/workflows/deploy.yml` deploys to `dev`.
+Use the manual `workflow_dispatch` trigger for `staging` and `prod`.
 
 ## Enterprise Guardrails
 
