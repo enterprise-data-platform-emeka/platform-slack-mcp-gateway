@@ -138,11 +138,9 @@ docker compose up --build
 The first gateway implementation listens for Slack app mentions and direct
 messages, calls `POST /ask` on `platform-analytics-agent`, then posts a
 Slack-native answer with assumptions, cost, intent verdict, SQL, request ID,
-and a chart link when the analytics agent returns one.
-
-The branded PDF report should come next by moving the existing PDF builder out
-of `platform-analytics-agent/ui/app.py` into a backend endpoint that both
-Streamlit and this gateway can call.
+and a chart link when the analytics agent returns one. It then calls
+`POST /report/pdf` and uploads the branded PDF report into the same Slack
+thread.
 
 ## Build And Destroy Plan
 
