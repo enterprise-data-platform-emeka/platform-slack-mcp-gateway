@@ -16,7 +16,10 @@ logger = logging.getLogger(__name__)
 
 def build_app(config: Config, tool: AnalyticsMCPTool) -> App:
     app = App(token=config.slack_bot_token)
+    # thread_key (channel:thread_ts) -> session_id
     slack_sessions: dict[str, str] = {}
+    # channel_id -> most recent session_id (fallback for new channel messages)
+    channel_sessions: dict[str, str] = {}
 
     @app.event("app_mention")
     def handle_app_mention(event: dict, say, client) -> None:  # type: ignore[no-untyped-def]
@@ -25,13 +28,27 @@ def build_app(config: Config, tool: AnalyticsMCPTool) -> App:
         if not allowed_channel(channel_name, config.allowed_channels):
             logger.info("Ignoring message from channel %s", channel_name or channel_id)
             return
-        _answer(event=event, say=say, client=client, tool=tool, slack_sessions=slack_sessions)
+        _answer(
+            event=event,
+            say=say,
+            client=client,
+            tool=tool,
+            slack_sessions=slack_sessions,
+            channel_sessions=channel_sessions,
+        )
 
     @app.event("message")
     def handle_direct_message(event: dict, say, client) -> None:  # type: ignore[no-untyped-def]
         if event.get("channel_type") != "im" or event.get("bot_id"):
             return
-        _answer(event=event, say=say, client=client, tool=tool, slack_sessions=slack_sessions)
+        _answer(
+            event=event,
+            say=say,
+            client=client,
+            tool=tool,
+            slack_sessions=slack_sessions,
+            channel_sessions=channel_sessions,
+        )
 
     return app
 
@@ -47,6 +64,7 @@ def _answer(
     client,
     tool: AnalyticsMCPTool,
     slack_sessions: dict[str, str],
+    channel_sessions: dict[str, str],
 ) -> None:
     text = str(event.get("text", ""))
     question = extract_question(text)
@@ -54,9 +72,17 @@ def _answer(
         say("Ask me a question about the EDP Gold data.")
         return
 
+    channel_id = str(event.get("channel", ""))
     slack_thread_key = _thread_key(event)
-    session_id = slack_sessions.get(slack_thread_key)
-    logger.info("Answering Slack question for thread %s", slack_thread_key)
+
+    # Prefer thread-level session, fall back to the channel's most recent session
+    # so follow-up questions sent as new channel messages still carry context.
+    session_id = slack_sessions.get(slack_thread_key) or channel_sessions.get(channel_id)
+    logger.info(
+        "Answering Slack question for thread %s (session=%s)",
+        slack_thread_key,
+        session_id or "new",
+    )
 
     try:
         result = tool.ask_data_question(question=question, session_id=session_id)
@@ -67,6 +93,7 @@ def _answer(
 
     if result.session_id:
         slack_sessions[slack_thread_key] = result.session_id
+        channel_sessions[channel_id] = result.session_id
 
     thread_ts = _reply_ts(event)
     say(text=format_answer(result), thread_ts=thread_ts)
