@@ -16,11 +16,6 @@ name: Deploy
 #   - workflow_dispatch                -> manually deploys to dev/staging/prod
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
-
   workflow_dispatch:
     inputs:
       environment:
@@ -35,7 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment || 'dev' }}
 
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       id-token: write
