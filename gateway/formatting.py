@@ -23,7 +23,15 @@ def allowed_channel(channel_name: str | None, allowed_channels: set[str]) -> boo
 
 
 def format_answer(result: AnalyticsResult, streamlit_url: str = "") -> str:
-    lines = [":bar_chart: *EDP Analytics Agent*", "", result.insight.strip()]
+    lines = [":bar_chart: *EDP Analytics Agent*", ""]
+
+    # Summary section — blockquote gives a visible left border in Slack
+    lines.append("*Summary*")
+    for sentence in result.insight.strip().splitlines():
+        lines.append(f"> {sentence}" if sentence.strip() else ">")
+
+    lines.append("")
+    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
     facts = [f"cost: `${result.cost_usd:.6f}`"]
     if result.chart_type and result.chart_type not in ("none", ""):
@@ -35,10 +43,14 @@ def format_answer(result: AnalyticsResult, streamlit_url: str = "") -> str:
     if streamlit_url:
         lines.extend(["", f"<{streamlit_url}|View full report in Streamlit>"])
 
-    if result.assumptions:
-        lines.extend(["", "*Assumptions:*"])
-        lines.extend(f"- {item}" for item in result.assumptions[:2])
+    return "\n".join(lines)
 
+
+def format_assumptions(result: AnalyticsResult) -> str:
+    if not result.assumptions:
+        return ""
+    lines = ["*Assumptions*"]
+    lines.extend(f"• {item}" for item in result.assumptions[:2])
     return "\n".join(lines)
 
 

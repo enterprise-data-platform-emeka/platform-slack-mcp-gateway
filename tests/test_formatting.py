@@ -1,7 +1,7 @@
 import unittest
 
 from gateway.analytics import AnalyticsResult
-from gateway.formatting import allowed_channel, extract_question, format_answer
+from gateway.formatting import allowed_channel, extract_question, format_answer, format_assumptions
 
 
 class FormattingTest(unittest.TestCase):
@@ -29,15 +29,28 @@ class FormattingTest(unittest.TestCase):
 
         message = format_answer(result, streamlit_url="http://my-alb:8501")
 
-        self.assertIn("Germany had the highest revenue.", message)
-        self.assertIn("Revenue means completed payments.", message)
+        self.assertIn("> Germany had the highest revenue.", message)
         self.assertIn("cost: `$0.001234`", message)
         self.assertIn("chart: `bar`", message)
         self.assertIn("<http://my-alb:8501|View full report in Streamlit>", message)
-        # noise removed from Slack message
+        # assumptions not in main message — posted separately after PDF
+        self.assertNotIn("Revenue means completed payments.", message)
         self.assertNotIn("SELECT", message)
         self.assertNotIn("req-123", message)
-        self.assertNotIn("scanned:", message)
+
+    def test_format_assumptions_posted_separately(self) -> None:
+        result = AnalyticsResult(
+            insight="Germany leads.",
+            assumptions=["Revenue means completed payments.", "No date filter applied."],
+        )
+        text = format_assumptions(result)
+        self.assertIn("*Assumptions*", text)
+        self.assertIn("• Revenue means completed payments.", text)
+        self.assertIn("• No date filter applied.", text)
+
+    def test_format_assumptions_empty_when_none(self) -> None:
+        result = AnalyticsResult(insight="Germany leads.", assumptions=[])
+        self.assertEqual(format_assumptions(result), "")
 
 
 if __name__ == "__main__":
