@@ -9,7 +9,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from gateway.analytics import AnalyticsAgentError, AnalyticsMCPTool, AnalyticsResult
 from gateway.config import Config  # noqa: F401 — used in type hints below
-from gateway.formatting import allowed_channel, extract_question, format_answer, format_assumptions, format_error
+from gateway.formatting import allowed_channel, extract_question, format_answer, format_footer, format_error
 
 logger = logging.getLogger(__name__)
 
@@ -108,10 +108,8 @@ def _answer(
     if not uploaded:
         say(text=formatted, thread_ts=thread_ts)
 
-    # Assumptions post as a separate thread reply so they appear after the PDF.
-    assumptions_text = format_assumptions(result)
-    if assumptions_text:
-        say(text=assumptions_text, thread_ts=thread_ts)
+    # Cost + assumptions post as a separate thread reply so they appear after the PDF.
+    say(text=format_footer(result), thread_ts=thread_ts)
 
 
 def _thread_key(event: dict) -> str:

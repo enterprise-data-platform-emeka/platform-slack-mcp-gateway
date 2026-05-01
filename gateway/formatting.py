@@ -23,22 +23,16 @@ def allowed_channel(channel_name: str | None, allowed_channels: set[str]) -> boo
 
 
 def format_answer(result: AnalyticsResult, streamlit_url: str = "") -> str:
+    """Primary message — posted as initial_comment on the PDF attachment.
+
+    Order: header → Summary blockquote → Streamlit link.
+    Cost and assumptions follow as a separate reply after the PDF.
+    """
     lines = [":bar_chart: *EDP Analytics Agent*", ""]
 
-    # Summary section — blockquote gives a visible left border in Slack
     lines.append("*Summary*")
-    for sentence in result.insight.strip().splitlines():
-        lines.append(f"> {sentence}" if sentence.strip() else ">")
-
-    lines.append("")
-    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-
-    facts = [f"cost: `${result.cost_usd:.6f}`"]
-    if result.chart_type and result.chart_type not in ("none", ""):
-        facts.append(f"chart: `{result.chart_type}`")
-    if result.verdict == "Yes":
-        facts.append("intent: `mismatch detected`")
-    lines.extend(["", " | ".join(facts)])
+    for line in result.insight.strip().splitlines():
+        lines.append(f"> {line}" if line.strip() else ">")
 
     if streamlit_url:
         lines.extend(["", f"<{streamlit_url}|View full report in Streamlit>"])
@@ -46,11 +40,22 @@ def format_answer(result: AnalyticsResult, streamlit_url: str = "") -> str:
     return "\n".join(lines)
 
 
-def format_assumptions(result: AnalyticsResult) -> str:
-    if not result.assumptions:
-        return ""
-    lines = ["*Assumptions*"]
-    lines.extend(f"• {item}" for item in result.assumptions[:2])
+def format_footer(result: AnalyticsResult) -> str:
+    """Follow-up thread reply posted after the PDF — cost, chart, and assumptions."""
+    lines = ["━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", ""]
+
+    facts = [f"cost: `${result.cost_usd:.6f}`"]
+    if result.chart_type and result.chart_type not in ("none", ""):
+        facts.append(f"chart: `{result.chart_type}`")
+    if result.verdict == "Yes":
+        facts.append("intent: `mismatch detected`")
+    lines.append(" | ".join(facts))
+
+    if result.assumptions:
+        lines.extend(["", "*Assumptions*"])
+        for item in result.assumptions[:2]:
+            lines.append(f"> {item}")
+
     return "\n".join(lines)
 
 
