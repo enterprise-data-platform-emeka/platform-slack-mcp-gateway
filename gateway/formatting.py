@@ -32,12 +32,12 @@ def format_answer(result: AnalyticsResult, streamlit_url: str = "") -> str:
         facts.append("intent: `mismatch detected`")
     lines.extend(["", " | ".join(facts)])
 
+    if streamlit_url:
+        lines.extend(["", f"<{streamlit_url}|View full report in Streamlit>"])
+
     if result.assumptions:
         lines.extend(["", "*Assumptions:*"])
         lines.extend(f"- {item}" for item in result.assumptions[:2])
-
-    if streamlit_url:
-        lines.extend(["", f"_View full report in Streamlit: {streamlit_url}_"])
 
     return "\n".join(lines)
 

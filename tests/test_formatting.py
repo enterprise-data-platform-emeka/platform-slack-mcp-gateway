@@ -33,7 +33,7 @@ class FormattingTest(unittest.TestCase):
         self.assertIn("Revenue means completed payments.", message)
         self.assertIn("cost: `$0.001234`", message)
         self.assertIn("chart: `bar`", message)
-        self.assertIn("http://my-alb:8501", message)
+        self.assertIn("<http://my-alb:8501|View full report in Streamlit>", message)
         # noise removed from Slack message
         self.assertNotIn("SELECT", message)
         self.assertNotIn("req-123", message)
