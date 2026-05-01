@@ -98,17 +98,15 @@ def _answer(
         slack_sessions[slack_thread_key] = result.session_id
         channel_sessions[channel_id] = result.session_id
 
-    formatted = format_answer(result, streamlit_url=config.streamlit_url)
     thread_ts = _reply_ts(event)
 
-    # Upload PDF with the formatted answer as initial_comment so the insight
-    # and the report appear as a single unit. Fall back to a plain text reply
-    # if the PDF cannot be built or uploaded.
-    uploaded = _upload_pdf_report(client, event, thread_ts, tool, question, result, formatted)
-    if not uploaded:
-        say(text=formatted, thread_ts=thread_ts)
+    # 1. Summary posts instantly — guaranteed first position in the thread.
+    say(text=format_answer(result, streamlit_url=config.streamlit_url), thread_ts=thread_ts)
 
-    # Cost + assumptions post as a separate thread reply so they appear after the PDF.
+    # 2. PDF uploads after the summary is already timestamped in Slack.
+    _upload_pdf_report(client, event, thread_ts, tool, question, result)
+
+    # 3. Footer (cost + assumptions) posts after PDF completes — guaranteed last.
     say(text=format_footer(result), thread_ts=thread_ts)
 
 
@@ -129,15 +127,14 @@ def _upload_pdf_report(
     tool: AnalyticsMCPTool,
     question: str,
     result: AnalyticsResult,
-    initial_comment: str,
-) -> bool:
-    """Upload the PDF report with the formatted answer as the message text.
+) -> None:
+    """Upload the PDF report silently into the thread.
 
-    Returns True on success, False on any failure so the caller can fall back
-    to a plain text reply.
+    The summary is already posted as a separate message before this call,
+    so no initial_comment is needed here.
     """
     if not result.insight:
-        return False
+        return
     try:
         filename, pdf_bytes = tool.build_pdf_report(question=question, result=result)
         client.files_upload_v2(
@@ -146,12 +143,9 @@ def _upload_pdf_report(
             filename=filename,
             title="EDP Analytics Report",
             file=pdf_bytes,
-            initial_comment=initial_comment,
         )
-        return True
     except Exception as exc:  # noqa: BLE001
         logger.warning("PDF upload failed: %s", exc)
-        return False
 
 
 def _channel_name(client, channel_id: str) -> str | None:  # type: ignore[no-untyped-def]
