@@ -8,7 +8,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from gateway.analytics import AnalyticsAgentError, AnalyticsMCPTool, AnalyticsResult
-from gateway.config import Config
+from gateway.config import Config  # noqa: F401 — used in type hints below
 from gateway.formatting import allowed_channel, extract_question, format_answer, format_error
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,7 @@ def build_app(config: Config, tool: AnalyticsMCPTool) -> App:
             say=say,
             client=client,
             tool=tool,
+            config=config,
             slack_sessions=slack_sessions,
             channel_sessions=channel_sessions,
         )
@@ -46,6 +47,7 @@ def build_app(config: Config, tool: AnalyticsMCPTool) -> App:
             say=say,
             client=client,
             tool=tool,
+            config=config,
             slack_sessions=slack_sessions,
             channel_sessions=channel_sessions,
         )
@@ -63,6 +65,7 @@ def _answer(
     say,
     client,
     tool: AnalyticsMCPTool,
+    config: Config,
     slack_sessions: dict[str, str],
     channel_sessions: dict[str, str],
 ) -> None:
@@ -95,9 +98,15 @@ def _answer(
         slack_sessions[slack_thread_key] = result.session_id
         channel_sessions[channel_id] = result.session_id
 
+    formatted = format_answer(result, streamlit_url=config.streamlit_url)
     thread_ts = _reply_ts(event)
-    say(text=format_answer(result), thread_ts=thread_ts)
-    _upload_pdf_report(client, event, thread_ts, tool, question, result)
+
+    # Upload PDF with the formatted answer as initial_comment so the insight
+    # and the report appear as a single unit. Fall back to a plain text reply
+    # if the PDF cannot be built or uploaded.
+    uploaded = _upload_pdf_report(client, event, thread_ts, tool, question, result, formatted)
+    if not uploaded:
+        say(text=formatted, thread_ts=thread_ts)
 
 
 def _thread_key(event: dict) -> str:
@@ -117,9 +126,15 @@ def _upload_pdf_report(
     tool: AnalyticsMCPTool,
     question: str,
     result: AnalyticsResult,
-) -> None:
+    initial_comment: str,
+) -> bool:
+    """Upload the PDF report with the formatted answer as the message text.
+
+    Returns True on success, False on any failure so the caller can fall back
+    to a plain text reply.
+    """
     if not result.insight:
-        return
+        return False
     try:
         filename, pdf_bytes = tool.build_pdf_report(question=question, result=result)
         client.files_upload_v2(
@@ -128,10 +143,12 @@ def _upload_pdf_report(
             filename=filename,
             title="EDP Analytics Report",
             file=pdf_bytes,
-            initial_comment="PDF report attached.",
+            initial_comment=initial_comment,
         )
+        return True
     except Exception as exc:  # noqa: BLE001
         logger.warning("PDF upload failed: %s", exc)
+        return False
 
 
 def _channel_name(client, channel_id: str) -> str | None:  # type: ignore[no-untyped-def]

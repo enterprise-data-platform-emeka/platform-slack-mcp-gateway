@@ -27,14 +27,17 @@ class FormattingTest(unittest.TestCase):
             request_id="req-123",
         )
 
-        message = format_answer(result)
+        message = format_answer(result, streamlit_url="http://my-alb:8501")
 
         self.assertIn("Germany had the highest revenue.", message)
         self.assertIn("Revenue means completed payments.", message)
         self.assertIn("cost: `$0.001234`", message)
-        self.assertIn("scanned: `2.0 KB`", message)
-        self.assertIn("SELECT * FROM", message)
-        self.assertIn("req-123", message)
+        self.assertIn("chart: `bar`", message)
+        self.assertIn("http://my-alb:8501", message)
+        # noise removed from Slack message
+        self.assertNotIn("SELECT", message)
+        self.assertNotIn("req-123", message)
+        self.assertNotIn("scanned:", message)
 
 
 if __name__ == "__main__":

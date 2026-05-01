@@ -22,39 +22,22 @@ def allowed_channel(channel_name: str | None, allowed_channels: set[str]) -> boo
     return bool(channel_name and channel_name in allowed_channels)
 
 
-def format_answer(result: AnalyticsResult) -> str:
+def format_answer(result: AnalyticsResult, streamlit_url: str = "") -> str:
     lines = [":bar_chart: *EDP Analytics Agent*", "", result.insight.strip()]
 
-    facts = []
-    if result.chart_type and result.chart_type != "none":
+    facts = [f"cost: `${result.cost_usd:.6f}`"]
+    if result.chart_type and result.chart_type not in ("none", ""):
         facts.append(f"chart: `{result.chart_type}`")
-    facts.append(f"cost: `${result.cost_usd:.6f}`")
-    if result.bytes_scanned:
-        facts.append(f"scanned: `{_format_bytes(result.bytes_scanned)}`")
-    if result.verdict:
-        facts.append(f"intent discrepancy: `{result.verdict}`")
+    if result.verdict == "Yes":
+        facts.append("intent: `mismatch detected`")
     lines.extend(["", " | ".join(facts)])
 
     if result.assumptions:
         lines.extend(["", "*Assumptions:*"])
-        lines.extend(f"- {item}" for item in result.assumptions[:5])
+        lines.extend(f"- {item}" for item in result.assumptions[:2])
 
-    if result.validation_flags:
-        lines.extend(["", "*Data quality notices:*"])
-        lines.extend(f"- {item}" for item in result.validation_flags[:5])
-
-    if result.discrepancy_detail and result.discrepancy_detail != "None":
-        lines.extend(["", f"*Intent check:* {result.discrepancy_detail}"])
-
-    if result.presigned_url:
-        lines.extend(["", f"*Chart image:* {result.presigned_url}"])
-
-    if result.sql:
-        sql = _truncate(result.sql.strip(), 2500)
-        lines.extend(["", "*SQL:*", f"```{sql}```"])
-
-    if result.request_id:
-        lines.extend(["", f"_Request ID: `{result.request_id}`_"])
+    if streamlit_url:
+        lines.extend(["", f"_View full report in Streamlit: {streamlit_url}_"])
 
     return "\n".join(lines)
 
