@@ -19,17 +19,47 @@ Stakeholders should be able to ask questions in Slack and receive:
 ## Architecture
 
 ```mermaid
-flowchart LR
-    User[Stakeholder in Slack] --> Slack[Slack Workspace]
-    Slack --> Gateway[Slack MCP Gateway\nECS Fargate + Socket Mode]
-    Gateway --> Agent[platform-analytics-agent\nFastAPI /ask + /report/pdf]
-    Agent --> Claude[Claude API\nSQL + intent + insight]
-    Agent --> Athena[Amazon Athena\nqueries Gold tables]
-    Athena --> S3Gold[S3 Gold\nbusiness mart data]
-    Agent --> S3Audit[S3 Audit\nlogs, charts, reports]
-    Agent --> Gateway
-    Gateway --> Slack
-    Slack --> User
+sequenceDiagram
+    autonumber
+    actor S as Stakeholder
+    participant Slack as Slack Workspace
+    participant Gateway as Slack MCP Gateway<br/>(ECS Fargate)
+    participant API as platform-analytics-agent<br/>FastAPI
+    participant CL as Claude API
+    participant ATH as Amazon Athena
+    participant S3 as S3 Gold and Audit
+
+    S->>Slack: Types a question in a channel or DM
+    Slack->>Gateway: Sends app mention / message event<br/>(Socket Mode)
+    Gateway->>Gateway: Extracts question, user, channel, and thread context
+    Gateway->>API: POST /ask with question and session_id
+
+    API->>CL: Call 1: Generate SQL
+    CL-->>API: SQL query + assumptions
+    API->>API: Validate SQL guardrails
+    API->>CL: Call 2: Infer SQL intent (question withheld)
+    CL-->>API: Inferred intent + verdict
+    loop Retry once on intent mismatch
+        API->>CL: Regenerate SQL with correction detail
+        CL-->>API: Corrected SQL query
+        API->>API: Validate SQL guardrails
+    end
+    API->>ATH: Run query against Gold tables
+    ATH->>S3: Reads curated Gold data
+    ATH-->>API: Results: rows and columns
+    API->>CL: Call 3: Generate insight
+    CL-->>API: 2-3 sentence insight and chart title
+    API->>S3: Write audit log and chart/report artifacts
+    API-->>Gateway: Returns insight, chart, cost, SQL, and verdict
+
+    opt PDF report requested
+        Gateway->>API: POST /report/pdf with completed /ask response
+        API-->>Gateway: Branded PDF as base64
+    end
+
+    Gateway->>Slack: Posts concise answer in channel
+    Gateway->>Slack: Adds SQL, assumptions, cost, and request ID in thread
+    Slack-->>S: Shows the answer, chart/report, and verification details
 ```
 
 The gateway should call the existing analytics API instead of duplicating
