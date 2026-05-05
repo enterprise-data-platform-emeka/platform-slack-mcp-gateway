@@ -23,21 +23,21 @@ sequenceDiagram
     autonumber
     actor S as Stakeholder
     participant Slack as Slack Workspace
-    participant Gateway as Slack MCP Gateway<br/>(ECS Fargate)
-    participant API as platform-analytics-agent<br/>FastAPI
+    participant Gateway as Slack MCP Gateway (ECS Fargate)
+    participant API as platform-analytics-agent FastAPI
     participant CL as Claude API
     participant ATH as Amazon Athena
     participant S3 as S3 Gold and Audit
 
     S->>Slack: Types a question in a channel or DM
-    Slack->>Gateway: Sends app mention / message event<br/>(Socket Mode)
+    Slack->>Gateway: Sends app mention / message event (Socket Mode)
     Gateway->>Gateway: Extracts question, user, channel, and thread context
     Gateway->>API: POST /ask with question and session_id
 
     API->>CL: Call 1: Generate SQL
     CL-->>API: SQL query + assumptions
     API->>API: Validate SQL guardrails
-    API->>CL: Call 2: Infer SQL intent<br/>(SQL only; question withheld except language hint)
+    API->>CL: Call 2: Infer SQL intent (SQL only; question withheld except language hint)
     CL-->>API: Inferred SQL intent
     API->>CL: Call 3: Compare original question vs inferred intent
     CL-->>API: Yes/No mismatch verdict + discrepancy detail
