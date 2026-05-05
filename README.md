@@ -37,17 +37,21 @@ sequenceDiagram
     API->>CL: Call 1: Generate SQL
     CL-->>API: SQL query + assumptions
     API->>API: Validate SQL guardrails
-    API->>CL: Call 2: Infer SQL intent (question withheld)
-    CL-->>API: Inferred intent + verdict
+    API->>CL: Call 2: Infer SQL intent<br/>(SQL only; question withheld except language hint)
+    CL-->>API: Inferred SQL intent
+    API->>CL: Call 3: Compare original question vs inferred intent
+    CL-->>API: Yes/No mismatch verdict + discrepancy detail
     loop Retry once on intent mismatch
         API->>CL: Regenerate SQL with correction detail
         CL-->>API: Corrected SQL query
-        API->>API: Validate SQL guardrails
+        API->>API: Validate corrected SQL guardrails
+        API->>CL: Re-infer corrected SQL intent for audit
+        CL-->>API: Corrected inferred SQL intent
     end
     API->>ATH: Run query against Gold tables
     ATH->>S3: Reads curated Gold data
     ATH-->>API: Results: rows and columns
-    API->>CL: Call 3: Generate insight
+    API->>CL: Call 4: Generate insight
     CL-->>API: 2-3 sentence insight and chart title
     API->>S3: Write audit log and chart/report artifacts
     API-->>Gateway: Returns insight, chart, cost, SQL, and verdict
