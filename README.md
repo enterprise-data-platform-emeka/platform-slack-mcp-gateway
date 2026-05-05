@@ -20,18 +20,54 @@ Stakeholders should be able to ask questions in Slack and receive:
 
 ```mermaid
 flowchart LR
-    Slack[Slack Workspace] --> Gateway[Slack MCP Gateway]
-    Gateway --> MCP[MCP Tools]
-    MCP --> Agent[platform-analytics-agent FastAPI]
-    Agent --> Athena[Amazon Athena]
-    Agent --> Claude[Claude API]
-    Agent --> S3[S3 Audit, Charts, Reports]
+    User[Stakeholder in Slack] --> Slack[Slack Workspace]
+    Slack --> Gateway[Slack MCP Gateway\nECS Fargate + Socket Mode]
+    Gateway --> Agent[platform-analytics-agent\nFastAPI /ask + /report/pdf]
+    Agent --> Claude[Claude API\nSQL + intent + insight]
+    Agent --> Athena[Amazon Athena\nqueries Gold tables]
+    Athena --> S3Gold[S3 Gold\nbusiness mart data]
+    Agent --> S3Audit[S3 Audit\nlogs, charts, reports]
+    Agent --> Gateway
     Gateway --> Slack
+    Slack --> User
 ```
 
 The gateway should call the existing analytics API instead of duplicating
 analytics logic. The current browser UI and report design stay owned by
 `platform-analytics-agent`.
+
+### Beginner-friendly flow
+
+Slack is a second front door into the same analytics engine used by the
+Streamlit browser app. It does not have its own SQL generator, chart renderer,
+or Athena logic.
+
+1. **Stakeholder in Slack** asks a plain-English question in a channel or direct
+   message. This is the user experience: no AWS console, no SQL editor, no
+   dashboard login.
+2. **Slack Workspace** receives the message and sends an event to the Slack app.
+   Slack is acting like the messenger between the user and the gateway.
+3. **Slack MCP Gateway** is a small Python service running on ECS Fargate. It
+   listens to Slack events using Socket Mode, cleans up the message, and calls
+   the analytics API.
+4. **Analytics Agent FastAPI** receives the same `/ask` request the Streamlit UI
+   would send. This keeps one source of truth for SQL generation, guardrails,
+   chart creation, cost tracking, and audit logging.
+5. **Claude API** helps generate SQL, cross-check SQL intent, and write the
+   final plain-English insight.
+6. **Amazon Athena** runs the validated SELECT query against the Gold tables.
+   Athena reads files directly from S3, so the agent does not need a database
+   server of its own.
+7. **S3 Gold** holds the curated business mart tables. These are the only data
+   tables the agent is allowed to query.
+8. **S3 Audit** stores the trace of the request: question, SQL, assumptions,
+   scan cost, response time, request ID, and report artifacts.
+9. **Slack MCP Gateway** formats the API response for Slack: short answer in the
+   channel, chart/report attachment when available, and technical details in a
+   thread for verification.
+
+In one sentence: Slack handles the conversation, the gateway handles Slack
+plumbing, and `platform-analytics-agent` handles the analytics.
 
 ## Slack Setup
 
