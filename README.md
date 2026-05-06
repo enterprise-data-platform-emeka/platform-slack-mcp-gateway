@@ -286,8 +286,8 @@ One-time prerequisites:
 4. Add `SLACK_APP_TOKEN` and `SLACK_BOT_TOKEN` to this repo's GitHub Actions
    secrets for each environment.
 
-After CI passes on `main`, `.github/workflows/deploy.yml` deploys to `dev`.
-Use the manual `workflow_dispatch` trigger for `staging` and `prod`.
+After CI passes on `main`, use the manual `.github/workflows/deploy.yml`
+`workflow_dispatch` trigger for `dev`, `staging`, or `prod`.
 
 ## Enterprise Guardrails
 

@@ -12,8 +12,7 @@ name: Deploy
 #   3. terraform-github-setup has created environments and AWS_ACCOUNT_ID here.
 #
 # Triggers:
-#   - workflow_run (CI passes on main) -> auto deploys to dev
-#   - workflow_dispatch                -> manually deploys to dev/staging/prod
+#   - workflow_dispatch -> manually deploys to dev/staging/prod
 
 on:
   workflow_dispatch:
