@@ -42,7 +42,6 @@ jobs:
               - 'slack-app-manifest.yml'
               - 'requirements*.txt'
               - 'pyproject.toml'
-              - '.github/workflows/**'
 
       - name: Set up Python
         if: steps.changes.outputs.source == 'true'
