@@ -291,12 +291,16 @@ After CI passes on `main`, use the manual `.github/workflows/deploy.yml`
 
 ## Enterprise Guardrails
 
-Before production use, add:
+### Implemented
 
-- Slack user allowlist or group allowlist.
-- Channel allowlist.
-- Per-user and per-channel rate limits.
-- Confirmation flow before sending expensive queries if needed.
-- Audit records with Slack user, channel, question, SQL, cost, and request ID.
-- Secret rotation process.
-- Separate dev/staging/prod Slack apps.
+- **Channel allowlist** — the gateway reads `SLACK_ALLOWED_CHANNELS` (comma-separated) from environment config. Messages from any channel not in the list are silently ignored. An empty allowlist allows all channels. Configured via the `slack_mcp_allowed_channels` Terraform variable.
+- **Direct message filtering** — bot-to-bot DMs are filtered out automatically. Only human-initiated messages reach the Analytics Agent.
+- **SQL guardrails** — enforced by the Analytics Agent backend: SELECT-only, Gold layer only, DDL keywords rejected, LIMIT always injected. The gateway never generates or executes SQL itself.
+- **Audit trail** — every question is written to the engineer log in S3 (`metadata/engineer-log/`) with Slack channel, question, SQL, cost, request ID, and timestamp.
+- **Separate per-environment Slack apps** — dev, staging, and prod each use independent `SLACK_APP_TOKEN` and `SLACK_BOT_TOKEN` secrets configured in GitHub Actions environments.
+
+### Not yet implemented
+
+- Per-user and per-channel rate limits (the Analytics Agent backend has a session-level rate limiter, but no Slack-user-level limit).
+- Slack user or group allowlist (channel-level filtering only today).
+- Confirmation flow before sending queries above a cost threshold.

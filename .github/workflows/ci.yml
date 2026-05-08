@@ -14,15 +14,8 @@ on:
       - "pyproject.toml"
       - ".github/workflows/**"
   pull_request:
-    paths:
-      - "gateway/**"
-      - "tests/**"
-      - "Dockerfile"
-      - "docker-compose.yml"
-      - "slack-app-manifest.yml"
-      - "requirements*.txt"
-      - "pyproject.toml"
-      - ".github/workflows/**"
+    # No path filter — CI runs on every PR so the required status check always
+    # reports a result. Expensive steps are skipped when only docs changed.
 
 permissions:
   contents: read
@@ -36,21 +29,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect source changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            source:
+              - 'gateway/**'
+              - 'tests/**'
+              - 'Dockerfile'
+              - 'docker-compose.yml'
+              - 'slack-app-manifest.yml'
+              - 'requirements*.txt'
+              - 'pyproject.toml'
+              - '.github/workflows/**'
+
       - name: Set up Python
+        if: steps.changes.outputs.source == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
+        if: steps.changes.outputs.source == 'true'
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run unit tests
+        if: steps.changes.outputs.source == 'true'
         run: python -m unittest discover -s tests
 
       - name: Compile package
+        if: steps.changes.outputs.source == 'true'
         run: python -m compileall gateway tests
 
       - name: Build Docker image
+        if: steps.changes.outputs.source == 'true'
         run: docker build -t platform-slack-mcp-gateway:test .
+
+      - name: Skip — docs-only change
+        if: steps.changes.outputs.source != 'true'
+        run: echo "No source changes. CI skipped for docs-only PR."
