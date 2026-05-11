@@ -1,3 +1,5 @@
+> **Prefer a visual version?** Open the [responsive HTML README](https://enterprise-data-platform-emeka.github.io/platform-slack-mcp-gateway/html/?v=latest).
+
 # platform-slack-mcp-gateway
 
 Slack + MCP gateway for the Enterprise Data Platform analytics agent.
