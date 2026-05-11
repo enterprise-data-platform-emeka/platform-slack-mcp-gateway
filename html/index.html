@@ -1,277 +1,465 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>platform-slack-mcp-gateway — Visual README</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>platform-slack-mcp-gateway | Visual README</title>
   <style>
     :root {
-      --accent: #2563eb;
+      --ink: #101828;
+      --muted: #667085;
+      --page: #f6f8fb;
+      --surface: rgba(255,255,255,.92);
+      --line: #d8e2ef;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
       --teal: #0f766e;
-      --violet: #7c3aed;
-      --ink: #0f172a;
-      --muted: #526175;
-      --page: #f5f8fb;
-      --surface: rgba(255,255,255,0.9);
-      --soft: #eef4fa;
-      --line: #d6e0ec;
-      --shadow: 0 22px 70px rgba(15,23,42,0.11);
+      --teal-soft: #e7f6f3;
+      --olive: #556b2f;
+      --olive-soft: #f1f5e9;
+      --amber: #b7791f;
+      --amber-soft: #fff6df;
+      --rose: #b42318;
+      --rose-soft: #fff0ef;
+      --shadow: 0 24px 80px rgba(16,24,40,.12);
+      --soft-shadow: 0 12px 34px rgba(16,24,40,.08);
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(rgba(37,99,235,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(37,99,235,0.035) 1px, transparent 1px),
-        radial-gradient(circle at 8% 0%, rgba(37,99,235,0.16), transparent 34rem),
-        radial-gradient(circle at 92% 8%, rgba(15,118,110,0.13), transparent 32rem),
+        linear-gradient(rgba(37,99,235,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,.035) 1px, transparent 1px),
+        radial-gradient(circle at 12% -8%, rgba(37,99,235,.14), transparent 32rem),
+        radial-gradient(circle at 92% 4%, rgba(15,118,110,.12), transparent 30rem),
+        radial-gradient(circle at 56% 110%, rgba(85,107,47,.10), transparent 36rem),
         var(--page);
-      background-size: 44px 44px, 44px 44px, auto, auto, auto;
+      background-size: 44px 44px, 44px 44px, auto, auto, auto, auto;
     }
-    a { color: var(--accent); text-decoration: none; }
+    a { color: inherit; text-decoration: none; }
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      padding: 0.85rem 1.4rem;
+      padding: .85rem 1.25rem;
       border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,.88);
       backdrop-filter: blur(18px);
     }
-    .brand { display: flex; align-items: center; gap: 0.75rem; font-weight: 950; }
-    .mark { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--teal)); color: #fff; box-shadow: 0 14px 28px rgba(37,99,235,0.25); font-size: 0.78rem; }
-    .nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .nav a { padding: 0.52rem 0.78rem; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.82); color: var(--muted); font-weight: 850; font-size: 0.86rem; }
-    .wrap { width: min(1240px, calc(100vw - 2rem)); margin: 0 auto; padding: 1.2rem 0 4rem; }
-    .hero { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(280px,0.65fr); gap: 1rem; margin: 1rem 0; }
-    .hero-card, .panel, .diagram-card, .concept-card, .section-tile {
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: var(--surface);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+    .brand { display: flex; align-items: center; gap: .72rem; min-width: 0; font-weight: 950; letter-spacing: -.02em; }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 950;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      box-shadow: 0 14px 32px rgba(37,99,235,.28);
     }
-    .hero-card { padding: 2.1rem; background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(15,118,110,0.06) 45%, rgba(255,255,255,0.96)); }
-    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; font-weight: 950; }
-    h1 { margin: 0.45rem 0 0.75rem; font-size: clamp(2.2rem,5vw,4.5rem); line-height: 0.95; letter-spacing: -0.045em; }
-    h2 { margin: 0.35rem 0 0.7rem; font-size: clamp(1.35rem,3vw,2.1rem); letter-spacing: -0.035em; }
-    h3 { margin: 0; font-size: 1.02rem; }
-    p { color: var(--muted); line-height: 1.58; }
-    .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-    .tags span { padding: 0.45rem 0.68rem; border-radius: 999px; border: 1px solid rgba(37,99,235,0.22); background: rgba(37,99,235,0.07); font-size: 0.83rem; font-weight: 850; color: #1f2937; }
-    .stats { display: grid; gap: 0.75rem; padding: 1rem; }
-    .metric { padding: 0.95rem; border: 1px solid var(--line); border-radius: 16px; background: var(--soft); }
-    .metric span { display: block; color: var(--muted); font-size: 0.76rem; font-weight: 850; }
-    .metric strong { display: block; margin-top: 0.25rem; font-size: 1.55rem; }
-    .diagram-card { margin: 1rem 0; overflow-x: auto; background: #fff; }
-    .diagram-card header { padding: 1.1rem 1.2rem 0; }
-    .diagram-card svg { display: block; min-width: 980px; width: 100%; height: auto; }
-    .diagram-heading { fill: var(--ink); font-size: 24px; font-weight: 950; }
-    .diagram-subtitle { fill: var(--muted); font-size: 14px; }
-    .arch-node, .flow-node, .actor-box { fill: #fff; stroke: #bfdbfe; stroke-width: 1.5; }
-    .arch-node.active { stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 8px 18px rgba(37,99,235,0.24)); }
-    .node-title, .actor-label { fill: var(--ink); font-size: 13px; font-weight: 900; }
-    .node-sub { fill: var(--muted); font-size: 11px; font-weight: 750; }
-    .layer-label { fill: #334155; font-size: 12px; font-weight: 900; }
-    .swimlane { stroke: #bfdbfe; stroke-width: 2; }
-    .flow-arrow .hit { stroke: transparent; stroke-width: 18; fill: none; pointer-events: stroke; }
-    .flow-arrow .line { fill: none; stroke: #334155; stroke-width: 2.4; marker-end: url(#arrow-dark); transition: stroke .18s ease, stroke-width .18s ease, filter .18s ease; }
-    .flow-arrow.accent .line { stroke: var(--accent); marker-end: url(#arrow-accent); }
-    .flow-arrow.return .line { stroke: #64748b; stroke-dasharray: 6 6; }
-    .flow-arrow:hover .line { stroke: var(--accent); stroke-width: 4; stroke-dasharray: 12 8; animation: flowDash .8s linear infinite; filter: drop-shadow(0 0 8px rgba(37,99,235,.62)); marker-end: url(#arrow-accent); }
-    .flow-arrow text { fill: var(--ink); font-size: 12px; font-weight: 820; pointer-events: none; }
-    .flow-arrow:hover text { fill: var(--accent); font-weight: 950; }
-    @keyframes flowDash { to { stroke-dashoffset: -40; } }
-    .explain { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .75rem; padding: 0 1.2rem 1.2rem; }
-    .explain div, .concept-card { padding: .95rem; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.86); box-shadow: none; }
-    .explain strong, .concept-card h3 { display: block; margin-bottom: .28rem; }
-    .explain span, .concept-card p { color: var(--muted); font-size: .9rem; line-height: 1.45; }
-    .concept-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; margin: 1rem 0; }
-    .mini-flow { display: flex; gap: .45rem; align-items: center; flex-wrap: wrap; margin: .85rem 0; }
-    .mini-node { padding: .42rem .58rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; font-size: .78rem; font-weight: 850; }
-    .mini-arrow { color: var(--accent); font-weight: 950; }
-    .sections { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .85rem; margin-top: 1rem; }
-    .section-tile { padding: .95rem; box-shadow: none; display: flex; gap: .75rem; align-items: center; }
-    .section-tile span { color: var(--accent); font-size: .82rem; font-weight: 950; }
-    .section-tile strong { line-height: 1.3; }
-    .footer { color: var(--muted); text-align: center; font-size: .9rem; margin-top: 1.4rem; }
-    @media (max-width: 900px) {
-      .topbar { flex-direction: column; align-items: flex-start; }
-      .hero, .concept-grid, .sections, .explain { grid-template-columns: 1fr; }
-      .diagram-card svg { min-width: 920px; }
+    .brand span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; }
+    .nav a {
+      padding: .55rem .8rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #344054;
+      background: rgba(255,255,255,.78);
+      font-size: .84rem;
+      font-weight: 850;
+      box-shadow: 0 8px 18px rgba(16,24,40,.04);
+    }
+    .nav a:hover { border-color: #b8cdf0; color: var(--blue); background: #fff; }
+    .wrap { width: min(1320px, calc(100vw - 2rem)); margin: 0 auto; padding: 1.25rem 0 4rem; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr); gap: 1rem; margin: 1rem 0; }
+    .card, .diagram-card, .concept { border: 1px solid var(--line); border-radius: 28px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+    .hero-main {
+      padding: clamp(1.4rem, 4vw, 2.4rem);
+      background:
+        linear-gradient(135deg, rgba(37,99,235,.10), rgba(15,118,110,.07) 48%, rgba(255,255,255,.95)),
+        #fff;
+    }
+    .eyebrow { color: var(--blue); text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; font-weight: 950; }
+    h1 { margin: .42rem 0 .78rem; max-width: 940px; font-size: clamp(2.4rem, 6vw, 5.2rem); line-height: .92; letter-spacing: -.06em; }
+    h2 { margin: .35rem 0 .75rem; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.02; letter-spacing: -.045em; }
+    h3 { margin: 0; font-size: 1.05rem; letter-spacing: -.02em; }
+    p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .hero-main p { max-width: 840px; font-size: 1.04rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.15rem; }
+    .tag { display: inline-flex; padding: .44rem .68rem; border: 1px solid rgba(37,99,235,.22); border-radius: 999px; background: rgba(37,99,235,.07); color: #1d2939; font-size: .82rem; font-weight: 850; }
+    .quick-stats { display: grid; gap: .72rem; padding: 1rem; }
+    .metric { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 1rem; padding: .95rem 1rem; border: 1px solid #d9e4f3; border-radius: 18px; background: linear-gradient(135deg, #fff, #edf4fc); }
+    .metric span { color: var(--muted); font-size: .76rem; font-weight: 850; text-transform: uppercase; letter-spacing: .05em; }
+    .metric strong { font-size: 1.45rem; line-height: 1; }
+    .diagram-card { margin: 1rem 0; background: rgba(255,255,255,.94); }
+    .diagram-head { padding: 1.25rem 1.35rem .3rem; }
+    .svg-frame { overflow-x: auto; padding: .25rem; }
+    svg { display: block; width: 100%; min-width: 980px; height: auto; }
+    .diagram-note { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; padding: .2rem 1.25rem 1.25rem; }
+    .note { padding: .95rem; border: 1px solid var(--line); border-radius: 18px; background: rgba(248,251,255,.88); box-shadow: 0 10px 26px rgba(16,24,40,.04); }
+    .note strong { display: block; margin-bottom: .25rem; color: var(--ink); }
+    .note span { display: block; color: var(--muted); font-size: .9rem; line-height: 1.48; }
+    .node { fill: #fff; stroke: #bfd5f3; stroke-width: 1.6; filter: drop-shadow(0 8px 16px rgba(16,24,40,.08)); }
+    .node-blue { fill: var(--blue-soft); stroke: #9cc2ff; }
+    .node-teal { fill: var(--teal-soft); stroke: #86d7cd; }
+    .node-olive { fill: var(--olive-soft); stroke: #bdcda0; }
+    .node-amber { fill: var(--amber-soft); stroke: #f4c77a; }
+    .node-rose { fill: var(--rose-soft); stroke: #f2aaa5; }
+    .node-dark { fill: #172033; stroke: #172033; }
+    .title { fill: var(--ink); font-size: 15px; font-weight: 950; }
+    .small-title { fill: var(--ink); font-size: 12.5px; font-weight: 950; }
+    .sub { fill: var(--muted); font-size: 11.2px; font-weight: 760; }
+    .tiny { fill: var(--muted); font-size: 10px; font-weight: 750; }
+    .white-text { fill: #fff; }
+    .flow .hit { fill: none; stroke: transparent; stroke-width: 20; pointer-events: stroke; }
+    .flow .line { fill: none; stroke: #344054; stroke-width: 2.5; marker-end: url(#arrow-slate); transition: stroke .16s ease, stroke-width .16s ease, filter .16s ease; }
+    .flow.blue .line { stroke: var(--blue); marker-end: url(#arrow-blue); }
+    .flow.teal .line { stroke: var(--teal); marker-end: url(#arrow-teal); }
+    .flow.olive .line { stroke: var(--olive); marker-end: url(#arrow-olive); }
+    .flow.return .line { stroke: #667085; stroke-dasharray: 7 7; }
+    .flow:hover .line { stroke: var(--blue); stroke-width: 4.2; stroke-dasharray: 13 8; animation: dash 800ms linear infinite; filter: drop-shadow(0 0 9px rgba(37,99,235,.68)); marker-end: url(#arrow-blue); }
+    .flow text { fill: #1d2939; font-size: 12px; font-weight: 850; pointer-events: none; }
+    .flow:hover text { fill: var(--blue); font-weight: 950; }
+    @keyframes dash { to { stroke-dashoffset: -42; } }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .concept { padding: 1rem; box-shadow: var(--soft-shadow); }
+    .concept h3 { margin-bottom: .45rem; }
+    .concept p { font-size: .94rem; }
+    .mini-flow { display: flex; flex-wrap: wrap; align-items: center; gap: .42rem; margin: .72rem 0 .82rem; }
+    .mini-node { padding: .42rem .58rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: #344054; font-size: .78rem; font-weight: 850; }
+    .mini-arrow { color: var(--blue); font-weight: 950; }
+    .repo-links { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1rem; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: .7rem .95rem; border: 1px solid #bdcbe0; border-radius: 14px; background: #fff; color: #344054; font-weight: 900; box-shadow: 0 10px 24px rgba(16,24,40,.07); }
+    .button.primary { color: #fff; border-color: #1d4ed8; background: linear-gradient(135deg, #2563eb, #0f766e); }
+    .footer { margin-top: 2rem; color: var(--muted); text-align: center; font-size: .9rem; }
+    @media (max-width: 960px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .nav { justify-content: flex-start; }
+      .hero, .diagram-note, .grid { grid-template-columns: 1fr; }
+      svg { min-width: 900px; }
+      .wrap { width: min(100% - 1rem, 1320px); }
     }
   </style>
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><div class="mark">EDP</div><span>platform-slack-mcp-gateway</span></div>
-    <nav class="nav">
+    <a class="brand" href="https://github.com/enterprise-data-platform-emeka/platform-slack-mcp-gateway">
+      <span class="brand-mark">EDP</span>
+      <span>platform-slack-mcp-gateway</span>
+    </a>
+    <nav class="nav" aria-label="Page navigation">
       <a href="https://github.com/enterprise-data-platform-emeka/platform-slack-mcp-gateway/blob/main/README.md">README.md</a>
-      <a href="#architecture">Architecture</a>
-      <a href="#repo-flow">Repo Flow</a>
-      <a href="#concepts">Concepts</a>
+      <a href="#position">Position</a>
+      <a href="#sequence">Sequence</a>
+      <a href="#boundary">MCP boundary</a>
+      <a href="#guardrails">Guardrails</a>
+      <a href="#deploy">Deploy</a>
     </nav>
   </header>
+
   <main class="wrap">
     <section class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">Visual README</div>
-        <h1>platform-slack-mcp-gateway</h1>
-        <p>Slack and MCP gateway that turns Slack into another frontend for the governed analytics agent.</p>
-        <div class="tags"><span>Slack</span><span>MCP</span><span>FastAPI</span><span>Tool calls</span><span>Report assets</span></div>
+      <div class="card hero-main">
+        <div class="eyebrow">Slack and MCP analytics gateway</div>
+        <h1>Slack becomes a governed analytics entry point.</h1>
+        <p>
+          This repository listens to Slack app mentions and direct messages, converts them into analytics tool calls,
+          sends the question to the existing FastAPI agent, and posts a Slack-native answer with report assets,
+          cost, assumptions, and verification details.
+        </p>
+        <div class="tags">
+          <span class="tag">Slack Socket Mode</span>
+          <span class="tag">MCP-style tool facade</span>
+          <span class="tag">FastAPI reuse</span>
+          <span class="tag">PDF upload</span>
+          <span class="tag">Channel allowlist</span>
+          <span class="tag">ECS Fargate</span>
+        </div>
       </div>
-      <aside class="panel stats">
-        <div class="metric"><span>README lines</span><strong>308</strong></div>
-        <div class="metric"><span>Major sections</span><strong>9</strong></div>
-        <div class="metric"><span>Code examples</span><strong>13</strong></div>
-        <div class="metric"><span>Table rows</span><strong>0</strong></div>
+      <aside class="card quick-stats">
+        <div class="metric"><span>Backend SQL logic</span><strong>0 copied</strong></div>
+        <div class="metric"><span>Slack events</span><strong>2</strong></div>
+        <div class="metric"><span>Core tool</span><strong>ask_data_question</strong></div>
+        <div class="metric"><span>Deploy target</span><strong>ECS</strong></div>
       </aside>
     </section>
 
-    <section class="diagram-card" id="architecture">
-      <header>
-        <div class="eyebrow">End-to-end architecture</div>
-        <h2>Where this repo sits in the full platform</h2>
-      </header>
-      
-      <svg viewBox="0 0 1230 500" role="img" aria-label="End-to-end Enterprise Data Platform architecture">
-        <defs>
-          <marker id="arrow-dark" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
-          <marker id="arrow-accent" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
-        </defs>
-        <rect x="0" y="0" width="1230" height="500" rx="28" fill="#f8fbff"/>
-        <text x="40" y="44" class="diagram-heading">Complete platform path</text>
-        <text x="40" y="70" class="diagram-subtitle">Source changes become trusted Gold marts, then three stakeholder frontends use the same governed analytics backend.</text>
-        <g><rect class="arch-node" x="55" y="84" width="130" height="68" rx="16"/><text x="120" y="114" text-anchor="middle" class="node-title">PostgreSQL</text><text x="120" y="134" text-anchor="middle" class="node-sub">Source OLTP</text></g><g><rect class="arch-node" x="220" y="84" width="130" height="68" rx="16"/><text x="285" y="114" text-anchor="middle" class="node-title">DMS CDC</text><text x="285" y="134" text-anchor="middle" class="node-sub">Change capture</text></g><g><rect class="arch-node" x="385" y="84" width="130" height="68" rx="16"/><text x="450" y="114" text-anchor="middle" class="node-title">Bronze S3</text><text x="450" y="134" text-anchor="middle" class="node-sub">Raw events</text></g><g><rect class="arch-node" x="550" y="84" width="130" height="68" rx="16"/><text x="615" y="114" text-anchor="middle" class="node-title">Glue PySpark</text><text x="615" y="134" text-anchor="middle" class="node-sub">Clean + reconcile</text></g><g><rect class="arch-node" x="715" y="84" width="130" height="68" rx="16"/><text x="780" y="114" text-anchor="middle" class="node-title">Silver S3</text><text x="780" y="134" text-anchor="middle" class="node-sub">Star schema</text></g><g><rect class="arch-node" x="880" y="84" width="130" height="68" rx="16"/><text x="945" y="114" text-anchor="middle" class="node-title">dbt / Athena</text><text x="945" y="134" text-anchor="middle" class="node-sub">Gold models</text></g><g><rect class="arch-node" x="1045" y="84" width="130" height="68" rx="16"/><text x="1110" y="114" text-anchor="middle" class="node-title">Gold S3</text><text x="1110" y="134" text-anchor="middle" class="node-sub">Business marts</text></g><g><rect class="arch-node" x="545" y="260" width="130" height="68" rx="16"/><text x="610" y="290" text-anchor="middle" class="node-title">FastAPI Agent</text><text x="610" y="310" text-anchor="middle" class="node-sub">SQL + guardrails</text></g><g><rect class="arch-node" x="280" y="390" width="130" height="68" rx="16"/><text x="345" y="420" text-anchor="middle" class="node-title">Streamlit UI</text><text x="345" y="440" text-anchor="middle" class="node-sub">Current UI</text></g><g><rect class="arch-node" x="545" y="390" width="130" height="68" rx="16"/><text x="610" y="420" text-anchor="middle" class="node-title">HTML Dashboard</text><text x="610" y="440" text-anchor="middle" class="node-sub">Custom UI</text></g><g><rect class="arch-node active" x="810" y="390" width="130" height="68" rx="16"/><text x="875" y="420" text-anchor="middle" class="node-title">Slack MCP</text><text x="875" y="440" text-anchor="middle" class="node-sub">Chat entry</text></g>
-        <g class="flow-arrow"><path class="hit" d="M185 118 L220 118"/><path class="line" d="M185 118 L220 118"/></g><g class="flow-arrow"><path class="hit" d="M350 118 L385 118"/><path class="line" d="M350 118 L385 118"/></g><g class="flow-arrow"><path class="hit" d="M515 118 L550 118"/><path class="line" d="M515 118 L550 118"/></g><g class="flow-arrow"><path class="hit" d="M680 118 L715 118"/><path class="line" d="M680 118 L715 118"/></g><g class="flow-arrow"><path class="hit" d="M845 118 L880 118"/><path class="line" d="M845 118 L880 118"/></g><g class="flow-arrow"><path class="hit" d="M1010 118 L1045 118"/><path class="line" d="M1010 118 L1045 118"/></g><g class="flow-arrow"><path class="hit" d="M1110 152 L610 260"/><path class="line" d="M1110 152 L610 260"/></g><g class="flow-arrow"><path class="hit" d="M545 328 L345 390"/><path class="line" d="M545 328 L345 390"/></g><g class="flow-arrow"><path class="hit" d="M610 328 L610 390"/><path class="line" d="M610 328 L610 390"/></g><g class="flow-arrow"><path class="hit" d="M675 328 L875 390"/><path class="line" d="M675 328 L875 390"/></g><g class="flow-arrow"><path class="hit" d="M345 390 L545 328"/><path class="line" d="M345 390 L545 328"/></g><g class="flow-arrow"><path class="hit" d="M610 390 L610 328"/><path class="line" d="M610 390 L610 328"/></g><g class="flow-arrow"><path class="hit" d="M875 390 L675 328"/><path class="line" d="M875 390 L675 328"/></g>
-        <rect x="498" y="224" width="228" height="132" rx="24" fill="rgba(37,99,235,0.06)" stroke="#bfdbfe"/>
-        <text x="612" y="242" text-anchor="middle" class="layer-label">Analytics serving layer</text>
-        <rect x="238" y="362" width="780" height="92" rx="24" fill="rgba(15,118,110,0.05)" stroke="#ccfbf1"/>
-        <text x="628" y="478" text-anchor="middle" class="layer-label">Frontends: Streamlit, custom HTML, and Slack all converge on FastAPI</text>
-      </svg>
-    
-      <div class="explain">
-        <div><strong>Data pipeline</strong><span>PostgreSQL changes are captured by DMS, stored in Bronze, cleaned by Glue, modeled by dbt, and exposed as Gold marts.</span></div>
-        <div><strong>Serving layer</strong><span>The analytics agent queries Gold data through Athena and returns governed answers with SQL, cost, and audit evidence.</span></div>
-        <div><strong>Frontends</strong><span>Streamlit, custom HTML, and Slack/MCP are separate user entry points that share the same backend contract.</span></div>
+    <section class="diagram-card" id="position">
+      <div class="diagram-head">
+        <div class="eyebrow">Frontend position</div>
+        <h2>The gateway is Slack plumbing around the existing analytics brain.</h2>
+      </div>
+      <div class="svg-frame">
+        <svg viewBox="0 0 1320 560" role="img" aria-label="Slack MCP gateway position in analytics architecture">
+          <defs>
+            <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+            <marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/></marker>
+            <marker id="arrow-olive" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#556b2f"/></marker>
+          </defs>
+          <rect width="1320" height="560" rx="30" fill="#fbfdff"/>
+          <text x="44" y="50" class="title" style="font-size:24px">Slack is the conversational frontend</text>
+          <text x="44" y="78" class="sub" style="font-size:14px">The gateway does not generate SQL or query Athena. It packages Slack messages into calls to the existing analytics API.</text>
+
+          <rect class="node node-blue" x="80" y="122" width="190" height="78" rx="20"/><text x="175" y="154" text-anchor="middle" class="title">Streamlit UI</text><text x="175" y="176" text-anchor="middle" class="sub">browser app</text>
+          <rect class="node node-teal" x="80" y="242" width="190" height="78" rx="20"/><text x="175" y="274" text-anchor="middle" class="title">HTML dashboard</text><text x="175" y="296" text-anchor="middle" class="sub">custom browser app</text>
+          <rect class="node node-dark" x="80" y="362" width="190" height="88" rx="22"/><text x="175" y="397" text-anchor="middle" class="title white-text">Slack MCP</text><text x="175" y="421" text-anchor="middle" class="sub white-text">this repo</text>
+
+          <rect class="node node-blue" x="460" y="242" width="220" height="96" rx="24"/><text x="570" y="278" text-anchor="middle" class="title">FastAPI Agent</text><text x="570" y="302" text-anchor="middle" class="sub">guarded analytics API</text><text x="570" y="322" text-anchor="middle" class="sub">/ask and /report/pdf</text>
+          <rect class="node node-olive" x="850" y="120" width="170" height="78" rx="20"/><text x="935" y="151" text-anchor="middle" class="title">Claude API</text><text x="935" y="174" text-anchor="middle" class="sub">SQL + insight</text>
+          <rect class="node node-olive" x="850" y="242" width="170" height="78" rx="20"/><text x="935" y="273" text-anchor="middle" class="title">Athena</text><text x="935" y="296" text-anchor="middle" class="sub">Gold queries</text>
+          <rect class="node node-olive" x="850" y="364" width="170" height="78" rx="20"/><text x="935" y="395" text-anchor="middle" class="title">S3 Audit</text><text x="935" y="418" text-anchor="middle" class="sub">logs + reports</text>
+          <rect class="node node-teal" x="1110" y="242" width="150" height="78" rx="20"/><text x="1185" y="273" text-anchor="middle" class="title">Gold S3</text><text x="1185" y="296" text-anchor="middle" class="sub">dbt marts</text>
+
+          <g class="flow"><path class="hit" d="M270 161 C350 180 408 244 460 264"/><path class="line" d="M270 161 C350 180 408 244 460 264"/></g>
+          <g class="flow"><path class="hit" d="M270 281 H460"/><path class="line" d="M270 281 H460"/></g>
+          <g class="flow blue"><path class="hit" d="M270 406 C350 390 408 334 460 316"/><path class="line" d="M270 406 C350 390 408 334 460 316"/><text x="365" y="377" text-anchor="middle">same backend</text></g>
+          <g class="flow olive"><path class="hit" d="M680 270 C750 220 800 165 850 159"/><path class="line" d="M680 270 C750 220 800 165 850 159"/></g>
+          <g class="flow olive"><path class="hit" d="M680 290 H850"/><path class="line" d="M680 290 H850"/></g>
+          <g class="flow olive"><path class="hit" d="M680 316 C750 365 800 400 850 403"/><path class="line" d="M680 316 C750 365 800 400 850 403"/></g>
+          <g class="flow teal"><path class="hit" d="M1020 281 H1110"/><path class="line" d="M1020 281 H1110"/></g>
+        </svg>
+      </div>
+      <div class="diagram-note">
+        <div class="note"><strong>Additive surface</strong><span>Slack adds a third entry point without replacing Streamlit or the custom HTML dashboard.</span></div>
+        <div class="note"><strong>No duplicate analytics</strong><span>SQL guardrails, Claude calls, Athena execution, charting, cost, and audit all remain in the FastAPI agent.</span></div>
+        <div class="note"><strong>Right level of detail</strong><span>Slack shows a short answer first, then puts cost, assumptions, and verification details in the thread.</span></div>
       </div>
     </section>
 
-    <section class="diagram-card" id="repo-flow">
-      <header>
-        <div class="eyebrow">Repository focus</div>
-        <h2>Slack analytics entry point</h2>
-      </header>
-      
-      <svg viewBox="0 0 1230 250" role="img" aria-label="Slack analytics entry point repository flow">
-        <defs>
-          <marker id="arrow-dark" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
-          <marker id="arrow-accent" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
-        </defs>
-        <rect x="0" y="0" width="1230" height="250" rx="28" fill="#ffffff"/>
-        <text x="40" y="46" class="diagram-heading">Slack analytics entry point</text>
-        <text x="40" y="72" class="diagram-subtitle">The main responsibility of this repository as a left-to-right flow.</text>
-        <g><rect class="flow-node" x="42.0" y="118" width="172.7" height="76" rx="18"/><text x="128.3" y="152" text-anchor="middle" class="node-title">Slack question</text><text x="128.3" y="172" text-anchor="middle" class="node-sub">Step 1</text></g><g class="flow-arrow"><path class="hit" d="M218.7 156 H232.7"/><path class="line" d="M218.7 156 H232.7"/></g><g><rect class="flow-node" x="236.7" y="118" width="172.7" height="76" rx="18"/><text x="323.0" y="152" text-anchor="middle" class="node-title">MCP gateway</text><text x="323.0" y="172" text-anchor="middle" class="node-sub">Step 2</text></g><g class="flow-arrow"><path class="hit" d="M413.3 156 H427.3"/><path class="line" d="M413.3 156 H427.3"/></g><g><rect class="flow-node" x="431.3" y="118" width="172.7" height="76" rx="18"/><text x="517.7" y="152" text-anchor="middle" class="node-title">Analytics tool call</text><text x="517.7" y="172" text-anchor="middle" class="node-sub">Step 3</text></g><g class="flow-arrow"><path class="hit" d="M608.0 156 H622.0"/><path class="line" d="M608.0 156 H622.0"/></g><g><rect class="flow-node" x="626.0" y="118" width="172.7" height="76" rx="18"/><text x="712.3" y="152" text-anchor="middle" class="node-title">FastAPI backend</text><text x="712.3" y="172" text-anchor="middle" class="node-sub">Step 4</text></g><g class="flow-arrow"><path class="hit" d="M802.7 156 H816.7"/><path class="line" d="M802.7 156 H816.7"/></g><g><rect class="flow-node" x="820.7" y="118" width="172.7" height="76" rx="18"/><text x="907.0" y="152" text-anchor="middle" class="node-title">Claude + Athena</text><text x="907.0" y="172" text-anchor="middle" class="node-sub">Step 5</text></g><g class="flow-arrow"><path class="hit" d="M997.3 156 H1011.3"/><path class="line" d="M997.3 156 H1011.3"/></g><g><rect class="flow-node" x="1015.3" y="118" width="172.7" height="76" rx="18"/><text x="1101.7" y="152" text-anchor="middle" class="node-title">Slack answer + report</text><text x="1101.7" y="172" text-anchor="middle" class="node-sub">Step 6</text></g>
-      </svg>
-    
-      <div class="explain">
-        <div><strong>Primary responsibility</strong><span>This diagram isolates the work owned by this repository from the rest of the platform.</span></div>
-        <div><strong>Input and output</strong><span>The left side shows what the repo receives; the right side shows what it hands to the next layer.</span></div>
-        <div><strong>Operational boundary</strong><span>The README has exact commands; this page shows the mental model behind those commands.</span></div>
+    <section class="diagram-card" id="sequence">
+      <div class="diagram-head">
+        <div class="eyebrow">Slack runtime sequence</div>
+        <h2>A Slack message becomes an analytics answer and a PDF report.</h2>
+      </div>
+      <div class="svg-frame">
+        <svg viewBox="0 0 1320 650" role="img" aria-label="Slack message to analytics answer sequence">
+          <defs>
+            <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+            <marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/></marker>
+            <marker id="arrow-olive" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#556b2f"/></marker>
+          </defs>
+          <rect width="1320" height="650" rx="30" fill="#fbfdff"/>
+          <text x="44" y="52" class="title" style="font-size:24px">Socket Mode request path</text>
+          <text x="44" y="80" class="sub" style="font-size:14px">Socket Mode avoids a public Slack request URL while still letting the ECS service receive app mentions and DMs.</text>
+
+          <line x1="95" y1="135" x2="95" y2="565" stroke="#c9dcf6" stroke-width="2"/>
+          <line x1="290" y1="135" x2="290" y2="565" stroke="#c9dcf6" stroke-width="2"/>
+          <line x1="510" y1="135" x2="510" y2="565" stroke="#c9dcf6" stroke-width="2"/>
+          <line x1="735" y1="135" x2="735" y2="565" stroke="#c9dcf6" stroke-width="2"/>
+          <line x1="965" y1="135" x2="965" y2="565" stroke="#c9dcf6" stroke-width="2"/>
+          <line x1="1205" y1="135" x2="1205" y2="565" stroke="#c9dcf6" stroke-width="2"/>
+          <rect class="node" x="32" y="92" width="126" height="44" rx="13"/><text x="95" y="119" text-anchor="middle" class="small-title">Stakeholder</text>
+          <rect class="node node-blue" x="220" y="92" width="140" height="44" rx="13"/><text x="290" y="119" text-anchor="middle" class="small-title">Slack</text>
+          <rect class="node node-dark" x="430" y="92" width="160" height="44" rx="13"/><text x="510" y="119" text-anchor="middle" class="small-title white-text">Gateway</text>
+          <rect class="node node-blue" x="665" y="92" width="140" height="44" rx="13"/><text x="735" y="119" text-anchor="middle" class="small-title">Agent API</text>
+          <rect class="node node-olive" x="890" y="92" width="150" height="44" rx="13"/><text x="965" y="119" text-anchor="middle" class="small-title">Claude/Athena</text>
+          <rect class="node node-teal" x="1142" y="92" width="126" height="44" rx="13"/><text x="1205" y="119" text-anchor="middle" class="small-title">Slack Thread</text>
+
+          <g class="flow"><path class="hit" d="M95 172 H290"/><path class="line" d="M95 172 H290"/><text x="192" y="160" text-anchor="middle">1. App mention or DM</text></g>
+          <g class="flow blue"><path class="hit" d="M290 220 H510"/><path class="line" d="M290 220 H510"/><text x="400" y="208" text-anchor="middle">2. Socket Mode event</text></g>
+          <g class="flow"><path class="hit" d="M510 268 C564 278 594 314 630 346"/><path class="line" d="M510 268 C564 278 594 314 630 346"/><text x="568" y="294">3. Extract question</text></g>
+          <rect class="node node-amber" x="470" y="300" width="170" height="76" rx="18"/>
+          <text x="555" y="329" text-anchor="middle" class="small-title">Channel + DM filters</text>
+          <text x="555" y="350" text-anchor="middle" class="tiny">allowlist, bot filtering</text>
+          <g class="flow blue"><path class="hit" d="M510 390 H735"/><path class="line" d="M510 390 H735"/><text x="622" y="378" text-anchor="middle">4. POST /ask with session_id</text></g>
+          <g class="flow olive"><path class="hit" d="M735 438 H965"/><path class="line" d="M735 438 H965"/><text x="850" y="426" text-anchor="middle">5. SQL, guardrails, query, insight</text></g>
+          <g class="flow return"><path class="hit" d="M965 486 H735"/><path class="line" d="M965 486 H735"/><text x="850" y="474" text-anchor="middle">6. rows, chart, cost, verdict</text></g>
+          <g class="flow return"><path class="hit" d="M735 526 H510"/><path class="line" d="M735 526 H510"/><text x="622" y="514" text-anchor="middle">7. AnalyticsResult</text></g>
+          <g class="flow teal"><path class="hit" d="M510 555 C710 585 972 584 1205 555"/><path class="line" d="M510 555 C710 585 972 584 1205 555"/><text x="858" y="604" text-anchor="middle">8. Summary, PDF upload, footer with cost and assumptions</text></g>
+        </svg>
+      </div>
+      <div class="diagram-note">
+        <div class="note"><strong>Thread-aware sessions</strong><span>The gateway stores session IDs by Slack thread key and falls back to recent channel session context.</span></div>
+        <div class="note"><strong>Ordered replies</strong><span>The summary posts first, the PDF uploads next, and the cost/assumption footer posts last.</span></div>
+        <div class="note"><strong>Backend reuse</strong><span>The gateway calls `/ask` and `/report/pdf`; it never reaches directly into Claude, Athena, or S3.</span></div>
       </div>
     </section>
 
-    <section class="diagram-card">
-      <header>
-        <div class="eyebrow">Runtime sequence</div>
-        <h2>How work moves through the repo</h2>
-      </header>
-      
-      <svg viewBox="0 0 1230 560" role="img" aria-label="Runtime interaction sequence">
-        <defs>
-          <marker id="arrow-dark" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
-          <marker id="arrow-accent" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
-        </defs>
-        <rect x="0" y="0" width="1230" height="560" rx="28" fill="#fbfdff"/>
-        <text x="40" y="38" class="diagram-heading">Runtime interaction</text>
-        <line class="swimlane" x1="82.0" y1="96" x2="82.0" y2="500"/><rect class="actor-box" x="18.0" y="46" width="128" height="42" rx="12"/><text class="actor-label" x="82.0" y="72" text-anchor="middle">Slack</text><line class="swimlane" x1="295.2" y1="96" x2="295.2" y2="500"/><rect class="actor-box" x="231.2" y="46" width="128" height="42" rx="12"/><text class="actor-label" x="295.2" y="72" text-anchor="middle">MCP gateway</text><line class="swimlane" x1="508.4" y1="96" x2="508.4" y2="500"/><rect class="actor-box" x="444.4" y="46" width="128" height="42" rx="12"/><text class="actor-label" x="508.4" y="72" text-anchor="middle">Agent API</text><line class="swimlane" x1="721.6" y1="96" x2="721.6" y2="500"/><rect class="actor-box" x="657.6" y="46" width="128" height="42" rx="12"/><text class="actor-label" x="721.6" y="72" text-anchor="middle">Claude</text><line class="swimlane" x1="934.8" y1="96" x2="934.8" y2="500"/><rect class="actor-box" x="870.8" y="46" width="128" height="42" rx="12"/><text class="actor-label" x="934.8" y="72" text-anchor="middle">Athena</text><line class="swimlane" x1="1148.0" y1="96" x2="1148.0" y2="500"/><rect class="actor-box" x="1084.0" y="46" width="128" height="42" rx="12"/><text class="actor-label" x="1148.0" y="72" text-anchor="middle">S3 Audit</text>
-        <g class="flow-arrow accent"><path class="hit" d="M82.0 138 H295.2"/><path class="line" d="M82.0 138 H295.2"/><text x="188.6" y="128" text-anchor="middle">1. Trigger</text></g><g class="flow-arrow accent"><path class="hit" d="M295.2 190 H508.4"/><path class="line" d="M295.2 190 H508.4"/><text x="401.8" y="180" text-anchor="middle">2. Route work</text></g><g class="flow-arrow accent"><path class="hit" d="M508.4 248 H721.6"/><path class="line" d="M508.4 248 H721.6"/><text x="615.0" y="238" text-anchor="middle">3. Process / generate</text></g><g class="flow-arrow accent"><path class="hit" d="M721.6 306 H934.8"/><path class="line" d="M721.6 306 H934.8"/><text x="828.2" y="296" text-anchor="middle">4. Read or write data</text></g><g class="flow-arrow return"><path class="hit" d="M934.8 364 H508.4"/><path class="line" d="M934.8 364 H508.4"/><text x="721.6" y="354" text-anchor="middle">5. Return evidence</text></g><g class="flow-arrow return"><path class="hit" d="M508.4 420 H295.2"/><path class="line" d="M508.4 420 H295.2"/><text x="401.8" y="410" text-anchor="middle">6. Package response</text></g><g class="flow-arrow return"><path class="hit" d="M295.2 470 H82.0"/><path class="line" d="M295.2 470 H82.0"/><text x="188.6" y="460" text-anchor="middle">7. Operational result</text></g>
-      </svg>
-    
-      <div class="explain">
-        <div><strong>Trigger</strong><span>A person, workflow, schedule, or frontend starts the sequence.</span></div>
-        <div><strong>Processing</strong><span>The repo performs its specialized job and returns evidence or artifacts.</span></div>
-        <div><strong>Handoff</strong><span>The output feeds another repository, platform layer, or stakeholder interface.</span></div>
+    <section class="diagram-card" id="boundary">
+      <div class="diagram-head">
+        <div class="eyebrow">MCP-style boundary</div>
+        <h2>The Slack listener talks to one analytics tool facade.</h2>
+      </div>
+      <div class="svg-frame">
+        <svg viewBox="0 0 1320 560" role="img" aria-label="MCP tool facade boundary">
+          <defs>
+            <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+            <marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/></marker>
+            <marker id="arrow-olive" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#556b2f"/></marker>
+          </defs>
+          <rect width="1320" height="560" rx="30" fill="#fbfdff"/>
+          <text x="44" y="52" class="title" style="font-size:24px">Internal gateway boundaries</text>
+          <text x="44" y="80" class="sub" style="font-size:14px">The facade keeps Slack event handling separate from the analytics API shape.</text>
+
+          <rect x="70" y="132" width="270" height="310" rx="26" fill="#eaf2ff" stroke="#9cc2ff"/>
+          <text x="205" y="166" text-anchor="middle" class="title">Slack adapter</text>
+          <rect class="node" x="110" y="220" width="190" height="56" rx="16"/><text x="205" y="253" text-anchor="middle" class="small-title">build_app()</text>
+          <rect class="node" x="110" y="320" width="190" height="56" rx="16"/><text x="205" y="353" text-anchor="middle" class="small-title">_answer()</text>
+
+          <rect x="520" y="132" width="280" height="310" rx="26" fill="#fff6df" stroke="#f4c77a"/>
+          <text x="660" y="166" text-anchor="middle" class="title">AnalyticsMCPTool</text>
+          <rect class="node node-amber" x="565" y="220" width="190" height="56" rx="16"/><text x="660" y="245" text-anchor="middle" class="small-title">ask_data_question()</text><text x="660" y="264" text-anchor="middle" class="tiny">question + session_id</text>
+          <rect class="node node-amber" x="565" y="320" width="190" height="56" rx="16"/><text x="660" y="345" text-anchor="middle" class="small-title">build_pdf_report()</text><text x="660" y="364" text-anchor="middle" class="tiny">completed result</text>
+
+          <rect x="980" y="132" width="270" height="310" rx="26" fill="#e7f6f3" stroke="#86d7cd"/>
+          <text x="1115" y="166" text-anchor="middle" class="title">Analytics API client</text>
+          <rect class="node node-teal" x="1020" y="220" width="190" height="56" rx="16"/><text x="1115" y="245" text-anchor="middle" class="small-title">POST /ask</text><text x="1115" y="264" text-anchor="middle" class="tiny">returns AnalyticsResult</text>
+          <rect class="node node-teal" x="1020" y="320" width="190" height="56" rx="16"/><text x="1115" y="345" text-anchor="middle" class="small-title">POST /report/pdf</text><text x="1115" y="364" text-anchor="middle" class="tiny">returns base64 PDF</text>
+
+          <g class="flow blue"><path class="hit" d="M300 248 H565"/><path class="line" d="M300 248 H565"/></g>
+          <g class="flow blue"><path class="hit" d="M300 348 H565"/><path class="line" d="M300 348 H565"/></g>
+          <g class="flow teal"><path class="hit" d="M755 248 H1020"/><path class="line" d="M755 248 H1020"/></g>
+          <g class="flow teal"><path class="hit" d="M755 348 H1020"/><path class="line" d="M755 348 H1020"/></g>
+          <rect class="node node-dark" x="512" y="462" width="296" height="50" rx="16"/>
+          <text x="660" y="492" text-anchor="middle" class="title white-text">Future MCP transports can expose the same tool methods</text>
+        </svg>
+      </div>
+      <div class="diagram-note">
+        <div class="note"><strong>Slack adapter</strong><span>Handles app mentions, DMs, channel filtering, thread/session mapping, and Slack formatting.</span></div>
+        <div class="note"><strong>Tool facade</strong><span>Provides the stable gateway boundary: ask a data question and build a report.</span></div>
+        <div class="note"><strong>API client</strong><span>Uses the standard library HTTP client to call the existing analytics agent.</span></div>
       </div>
     </section>
 
-    <section id="concepts">
-      <div class="eyebrow">Beginner-friendly concept map</div>
-      <h2>Key ideas to understand</h2>
-      <div class="concept-grid">
-          <article class="concept-card">
-            <h3>Slack as frontend</h3>
-            <div class="mini-flow"><span class="mini-node">message</span><span class="mini-arrow">→</span><span class="mini-node">tool call</span><span class="mini-arrow">→</span><span class="mini-node">answer</span></div>
-            <p>Stakeholders can ask questions without opening a dashboard.</p>
-          </article>
-        
-          <article class="concept-card">
-            <h3>Same guardrails</h3>
-            <div class="mini-flow"><span class="mini-node">SQL validation</span><span class="mini-arrow">→</span><span class="mini-node">intent verdict</span><span class="mini-arrow">→</span><span class="mini-node">audit</span></div>
-            <p>Slack does not bypass the agent&#x27;s governance checks.</p>
-          </article>
-        
-          <article class="concept-card">
-            <h3>Response package</h3>
-            <div class="mini-flow"><span class="mini-node">summary</span><span class="mini-arrow">→</span><span class="mini-node">chart</span><span class="mini-arrow">→</span><span class="mini-node">PDF</span><span class="mini-arrow">→</span><span class="mini-node">cost</span></div>
-            <p>Slack receives a concise version of the same business evidence.</p>
-          </article>
+    <section class="diagram-card" id="guardrails">
+      <div class="diagram-head">
+        <div class="eyebrow">Guardrails and output shape</div>
+        <h2>Slack controls who can ask; the agent controls what can run.</h2>
+      </div>
+      <div class="svg-frame">
+        <svg viewBox="0 0 1320 570" role="img" aria-label="Slack gateway guardrails and output formatting">
+          <defs>
+            <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+            <marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/></marker>
+            <marker id="arrow-olive" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#556b2f"/></marker>
+          </defs>
+          <rect width="1320" height="570" rx="30" fill="#fbfdff"/>
+          <text x="44" y="52" class="title" style="font-size:24px">Control points before and after the analytics call</text>
+          <text x="44" y="80" class="sub" style="font-size:14px">The gateway narrows Slack inputs and formats outputs. The analytics backend enforces SQL and data-access rules.</text>
+
+          <rect x="70" y="132" width="300" height="315" rx="26" fill="#eaf2ff" stroke="#9cc2ff"/>
+          <text x="220" y="166" text-anchor="middle" class="title">Gateway input controls</text>
+          <rect class="node" x="110" y="220" width="220" height="52" rx="15"/><text x="220" y="251" text-anchor="middle" class="small-title">allowed channel check</text>
+          <rect class="node" x="110" y="300" width="220" height="52" rx="15"/><text x="220" y="331" text-anchor="middle" class="small-title">bot-to-bot DM filter</text>
+          <rect class="node" x="110" y="380" width="220" height="52" rx="15"/><text x="220" y="411" text-anchor="middle" class="small-title">question extraction</text>
+
+          <rect x="510" y="132" width="300" height="315" rx="26" fill="#fff6df" stroke="#f4c77a"/>
+          <text x="660" y="166" text-anchor="middle" class="title">Agent controls</text>
+          <rect class="node node-amber" x="550" y="220" width="220" height="52" rx="15"/><text x="660" y="251" text-anchor="middle" class="small-title">SELECT-only SQL</text>
+          <rect class="node node-amber" x="550" y="300" width="220" height="52" rx="15"/><text x="660" y="331" text-anchor="middle" class="small-title">Gold layer only</text>
+          <rect class="node node-amber" x="550" y="380" width="220" height="52" rx="15"/><text x="660" y="411" text-anchor="middle" class="small-title">intent mismatch retry</text>
+
+          <rect x="950" y="132" width="300" height="315" rx="26" fill="#e7f6f3" stroke="#86d7cd"/>
+          <text x="1100" y="166" text-anchor="middle" class="title">Slack output format</text>
+          <rect class="node node-teal" x="990" y="220" width="220" height="52" rx="15"/><text x="1100" y="251" text-anchor="middle" class="small-title">summary answer</text>
+          <rect class="node node-teal" x="990" y="300" width="220" height="52" rx="15"/><text x="1100" y="331" text-anchor="middle" class="small-title">PDF report upload</text>
+          <rect class="node node-teal" x="990" y="380" width="220" height="52" rx="15"/><text x="1100" y="411" text-anchor="middle" class="small-title">cost and assumptions footer</text>
+
+          <g class="flow blue"><path class="hit" d="M370 246 H550"/><path class="line" d="M370 246 H550"/></g>
+          <g class="flow blue"><path class="hit" d="M370 326 H550"/><path class="line" d="M370 326 H550"/></g>
+          <g class="flow blue"><path class="hit" d="M370 406 H550"/><path class="line" d="M370 406 H550"/></g>
+          <g class="flow teal"><path class="hit" d="M770 246 H990"/><path class="line" d="M770 246 H990"/></g>
+          <g class="flow teal"><path class="hit" d="M770 326 H990"/><path class="line" d="M770 326 H990"/></g>
+          <g class="flow teal"><path class="hit" d="M770 406 H990"/><path class="line" d="M770 406 H990"/></g>
+          <rect class="node node-rose" x="462" y="490" width="396" height="44" rx="16"/>
+          <text x="660" y="518" text-anchor="middle" class="small-title">Not yet implemented: Slack user allowlist, Slack-user rate limits, cost confirmation flow</text>
+        </svg>
+      </div>
+      <div class="diagram-note">
+        <div class="note"><strong>Gateway-level controls</strong><span>Channel allowlisting and DM filtering prevent unintended Slack traffic from reaching the analytics agent.</span></div>
+        <div class="note"><strong>Backend-level controls</strong><span>The SQL rules remain centralized in the analytics agent, so every frontend follows the same policy.</span></div>
+        <div class="note"><strong>Thread transparency</strong><span>Slack gets a short answer while technical details stay available in the same conversation thread.</span></div>
+      </div>
+    </section>
+
+    <section class="diagram-card" id="deploy">
+      <div class="diagram-head">
+        <div class="eyebrow">Deployment and secrets</div>
+        <h2>GitHub deploys the gateway and moves Slack tokens into Secrets Manager.</h2>
+      </div>
+      <div class="svg-frame">
+        <svg viewBox="0 0 1320 570" role="img" aria-label="Slack MCP deployment and secrets flow">
+          <defs>
+            <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+            <marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/></marker>
+            <marker id="arrow-olive" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#556b2f"/></marker>
+          </defs>
+          <rect width="1320" height="570" rx="30" fill="#fbfdff"/>
+          <text x="44" y="52" class="title" style="font-size:24px">Deploy path for the Slack gateway</text>
+          <text x="44" y="80" class="sub" style="font-size:14px">Slack app identity remains stable; AWS runtime resources are disposable per environment.</text>
+
+          <rect class="node node-blue" x="70" y="236" width="160" height="74" rx="18"/><text x="150" y="266" text-anchor="middle" class="title">Manual deploy</text><text x="150" y="288" text-anchor="middle" class="sub">dev/staging/prod</text>
+          <rect class="node" x="300" y="150" width="180" height="74" rx="18"/><text x="390" y="180" text-anchor="middle" class="title">GitHub secrets</text><text x="390" y="202" text-anchor="middle" class="sub">Slack tokens</text>
+          <rect class="node node-amber" x="300" y="326" width="180" height="74" rx="18"/><text x="390" y="356" text-anchor="middle" class="title">OIDC role</text><text x="390" y="378" text-anchor="middle" class="sub">edp-env role</text>
+          <rect class="node node-rose" x="570" y="150" width="190" height="74" rx="18"/><text x="665" y="180" text-anchor="middle" class="title">Secrets Manager</text><text x="665" y="202" text-anchor="middle" class="sub">/edp/env/slack_mcp</text>
+          <rect class="node node-teal" x="570" y="326" width="190" height="74" rx="18"/><text x="665" y="356" text-anchor="middle" class="title">ECR image</text><text x="665" y="378" text-anchor="middle" class="sub">sha + latest</text>
+          <rect class="node node-olive" x="860" y="236" width="200" height="74" rx="18"/><text x="960" y="266" text-anchor="middle" class="title">ECS task</text><text x="960" y="288" text-anchor="middle" class="sub">gateway container</text>
+          <rect class="node node-dark" x="1140" y="236" width="120" height="74" rx="18"/><text x="1200" y="266" text-anchor="middle" class="title white-text">Slack</text><text x="1200" y="288" text-anchor="middle" class="sub white-text">Socket Mode</text>
+
+          <g class="flow blue"><path class="hit" d="M230 273 C260 230 275 190 300 187"/><path class="line" d="M230 273 C260 230 275 190 300 187"/></g>
+          <g class="flow blue"><path class="hit" d="M230 273 C260 315 275 360 300 363"/><path class="line" d="M230 273 C260 315 275 360 300 363"/></g>
+          <g class="flow"><path class="hit" d="M480 187 H570"/><path class="line" d="M480 187 H570"/></g>
+          <g class="flow teal"><path class="hit" d="M480 363 H570"/><path class="line" d="M480 363 H570"/></g>
+          <g class="flow olive"><path class="hit" d="M760 363 C820 336 840 286 860 273"/><path class="line" d="M760 363 C820 336 840 286 860 273"/></g>
+          <g class="flow return"><path class="hit" d="M760 187 C820 214 840 260 860 273"/><path class="line" d="M760 187 C820 214 840 260 860 273"/></g>
+          <g class="flow blue"><path class="hit" d="M1060 273 H1140"/><path class="line" d="M1060 273 H1140"/></g>
+        </svg>
+      </div>
+      <div class="diagram-note">
+        <div class="note"><strong>GitHub secrets source</strong><span>Environment-scoped Slack tokens are validated during deploy before AWS changes happen.</span></div>
+        <div class="note"><strong>AWS runtime secret</strong><span>The workflow writes Slack app and bot tokens into Secrets Manager for the ECS task to consume.</span></div>
+        <div class="note"><strong>Stable Slack identity</strong><span>The Slack workspace and app are not recreated for every demo; only the AWS gateway runtime is disposable.</span></div>
+      </div>
+    </section>
+
+    <section id="concepts" class="grid" aria-label="Repository concepts">
+      <article class="concept">
+        <h3>Repository mental model</h3>
+        <div class="mini-flow">
+          <span class="mini-node">Slack event</span>
+          <span class="mini-arrow">→</span>
+          <span class="mini-node">tool facade</span>
+          <span class="mini-arrow">→</span>
+          <span class="mini-node">agent API</span>
+          <span class="mini-arrow">→</span>
+          <span class="mini-node">threaded reply</span>
         </div>
-    </section>
-
-    <section>
-      <div class="eyebrow">README navigation</div>
-      <h2>Detailed sections in the markdown README</h2>
-      <div class="sections">
-          <article class="section-tile">
-            <span>01</span>
-            <strong>Purpose</strong>
-          </article>
-        
-          <article class="section-tile">
-            <span>02</span>
-            <strong>Architecture</strong>
-          </article>
-        
-          <article class="section-tile">
-            <span>03</span>
-            <strong>Slack Setup</strong>
-          </article>
-        
-          <article class="section-tile">
-            <span>04</span>
-            <strong>Local Environment</strong>
-          </article>
-        
-          <article class="section-tile">
-            <span>05</span>
-            <strong>Local Development</strong>
-          </article>
-        
-          <article class="section-tile">
-            <span>06</span>
-            <strong>Build And Destroy Plan</strong>
-          </article>
+        <p>The repo is a Slack adapter and gateway. It keeps conversation handling separate from analytics logic.</p>
+      </article>
+      <article class="concept">
+        <h3>Why Socket Mode</h3>
+        <div class="mini-flow">
+          <span class="mini-node">No public Slack callback URL</span>
+          <span class="mini-arrow">→</span>
+          <span class="mini-node">ECS connects outbound</span>
         </div>
+        <p>For demos and dev, Socket Mode keeps setup simpler while still supporting app mentions and direct messages.</p>
+      </article>
+      <article class="concept">
+        <h3>Where to read exact commands</h3>
+        <div class="repo-links">
+          <a class="button primary" href="https://enterprise-data-platform-emeka.github.io/platform-slack-mcp-gateway/html/?v=latest">HTML version</a>
+          <a class="button" href="https://github.com/enterprise-data-platform-emeka/platform-slack-mcp-gateway/blob/main/README.md">Markdown README</a>
+        </div>
+      </article>
     </section>
 
-    <p class="footer">Use this page to understand the architecture visually; use the rendered README for exact setup and troubleshooting details.</p>
+    <p class="footer">Visual README for platform-slack-mcp-gateway. The markdown README remains the exact command and operations reference.</p>
   </main>
 </body>
 </html>
